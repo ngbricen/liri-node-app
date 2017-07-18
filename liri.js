@@ -51,8 +51,10 @@ function runCommand(action,values){
 
 function myTwitter(){
 
-	twitter.get('search/tweets', twitterParams,searchedData); // get is the 
+	//search twitter with predefined parameters
+	twitter.get('search/tweets', twitterParams,searchedData); 
 
+	//Display Twitter Logs (up to 20)
 	function searchedData(err, data, response) {
 		//console.log("created on " + data.created_at + ": " + data.text);
 		for (i=0; i < data.statuses.length; i++){
@@ -64,7 +66,8 @@ function myTwitter(){
 
 function mySpotify(values){
 	var artists;
-	console.log(values);
+	
+	//if this is executed by the command line (and not the text file, parse the text)
 	if (values[2] === "spotify-this-song"){
 		for (var i = 3; i < values.length; i++) {
 			if (i > 3  && i < values.length) {
@@ -78,8 +81,6 @@ function mySpotify(values){
 	else{
 		musicName = values;
 	}
-
-	console.log	(musicName);
 
 	//If no artists entered search for the Sign by Ace of Base
 	if (musicName === "")
@@ -102,6 +103,7 @@ function mySpotify(values){
 	}
 	else
 	{
+		//Search for artists by values entered after "spotify-this"
 		spotify.search({ type: 'track', query: musicName }, function(err, data) {
 		  	if (err) {
 		    	return console.log('Error occurred: ' + err);
@@ -112,7 +114,7 @@ function mySpotify(values){
 				    console.log("Song Name: " + data.tracks.items[i].name);
 				    console.log("Preview: " + data.tracks.items[i].href);
 				    console.log("Album Name: " + data.tracks.items[i].album.name);
-				    console.log("--------------------");	
+				    console.log("-----------------------------------------------");	
 				}
 			}		
 		});
@@ -122,8 +124,7 @@ function mySpotify(values){
 function myMovie(values){
 	// Loop through all the words in the node argument
 	// And do a little for-loop magic to handle the inclusion of "+"s
-	//If it comes from the command line, loop to get the movie values, otherwise
-	//Grab it from the text file
+	//if this is executed by the command line (and not the text file, parse the text)
 	if (values[2] === "movie-this"){
 		for (var i = 3; i < values.length; i++) {
 			if (i > 3  && i < values.length) {
@@ -138,6 +139,8 @@ function myMovie(values){
 		movieName = values;
 	}
 
+	//If no movies entered, search for Mr. Nobody, otherwise search for all entries entered
+	//affter "movie-this"
 	if (movieName !== ""){
 		// Then run a request to the OMDB API with the movie specified
 		var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
@@ -167,6 +170,7 @@ function myMovie(values){
 }
 
 function myCommand(){
+	//Read from the file
 	fs.readFile("random.txt", "utf8", function(error, data) {
 		// If the code experiences any errors it will log the error to the console.
 		if (error) {
