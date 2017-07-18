@@ -7,15 +7,19 @@ var fs = require("fs");
 // Here we include the various API required for our app
 var requestPackage = require("request");
 var twitterPackage = require("twitter");
-var spotifyPackage = require("spotify");
+var spotifyPackage = require("node-spotify-api");
 var movieName = "";
+var musicName = "";
 
-//Assigning Keys
+//Assigning Twitter Keys
 var twitter = new twitterPackage(appKeys.twitterKeys);
 var twitterParams = {
 	q:'news',
 	count: 20
 }
+
+//Assigning Spotify Keys
+var spotify = new spotifyPackage(appKeys.spotifyKeys);
 
 // Take two arguments.
 // The first will be the action (i.e. "deposit", "withdraw", etc.)
@@ -54,12 +58,65 @@ function myTwitter(){
 		for (i=0; i < data.statuses.length; i++){
 			console.log(i + 1 + ": Created on " + data.statuses[i].created_at + ": " + data.statuses[i].text);
 		}
-	} // searchedData function is a callback function which 
+	} 
 }
 
-//TODO
-function mySpotify(values){
 
+function mySpotify(values){
+	var artists;
+	console.log(values);
+	if (values[2] === "spotify-this-song"){
+		for (var i = 3; i < values.length; i++) {
+			if (i > 3  && i < values.length) {
+				musicName = musicName + "+" + values[i];
+			}
+			else {
+				musicName += values[i];
+	  		}
+		}
+	}
+	else{
+		musicName = values;
+	}
+
+	console.log	(musicName);
+
+	//If no artists entered search for the Sign by Ace of Base
+	if (musicName === "")
+	{
+		spotify.search({ type: 'track', query: 'The Sign by Ace of Base' }, function(err, data) {
+		  	if (err) {
+		    	return console.log('Error occurred: ' + err);
+		  	}	
+
+		  	if (data.tracks.items.length > 0){
+		  		for (i=0; i < data.tracks.items.length; i++){
+					console.log("Artist: " + data.tracks.items[i].artists[0].name);
+				    console.log("Song Name: " + data.tracks.items[i].name);
+				    console.log("Preview: " + data.tracks.items[i].href);
+				    console.log("Album Name: " + data.tracks.items[i].album.name);
+				    console.log("--------------------");	
+				}
+			}	
+		});
+	}
+	else
+	{
+		spotify.search({ type: 'track', query: musicName }, function(err, data) {
+		  	if (err) {
+		    	return console.log('Error occurred: ' + err);
+		  	}	 
+		  	if (data.tracks.items.length > 0){
+		  		for (i=0; i < data.tracks.items.length; i++){
+					console.log("Artist: " + data.tracks.items[i].artists[0].name);
+				    console.log("Song Name: " + data.tracks.items[i].name);
+				    console.log("Preview: " + data.tracks.items[i].href);
+				    console.log("Album Name: " + data.tracks.items[i].album.name);
+				    console.log("--------------------");	
+				}
+			}		
+		});
+	}
 }
 
 function myMovie(values){
@@ -67,8 +124,8 @@ function myMovie(values){
 	// And do a little for-loop magic to handle the inclusion of "+"s
 	//If it comes from the command line, loop to get the movie values, otherwise
 	//Grab it from the text file
-	if (values[0] === "node"){
-		for (var i = 0; i < values.length; i++) {
+	if (values[2] === "movie-this"){
+		for (var i = 3; i < values.length; i++) {
 			if (i > 3  && i < values.length) {
 				movieName = movieName + "+" + values[i];
 			}

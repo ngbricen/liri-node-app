@@ -7,6 +7,11 @@ exports.twitterKeys = {
   access_token_secret: '355RFhctW4lIUmDMBKVCv3pGzxy9YQwrGIiH5QBEzyZe5',
 }
 
+exports.spotifyKeys = {
+  id: '9ed8681c45f84b588fe9142893afaa5a',
+  secret: '113d3cf365754fe997004373f53c8cc5',
+}
+
 exports.movieKeys = {
   consumer_key: '40e9cece',
 }
